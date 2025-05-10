@@ -6,27 +6,27 @@
   <style>
     /* Reset & Base */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background: #1e1e1e; color: #eee; }
+    body { font-family: sans-serif; background: #f4f4f4; }
 
     /* Menu Bar */
-    nav { background: #2c2c2c; border-bottom: 1px solid #444; position: relative; z-index: 100; }
+    nav { background: #fff; border-bottom: 1px solid #ddd; position: relative; z-index: 100; }
     nav ul { list-style: none; display: flex; padding: 0 16px; }
     nav > ul > li {
       position: relative;
       padding: 12px 16px;
       cursor: pointer;
-      color: #eee;
+      color: #333;
       user-select: none;
       transition: background 0.2s;
     }
-    nav > ul > li:hover { background: #3a3a3a; }
+    nav > ul > li:hover { background: #f5f5f5; }
     nav ul li ul {
       display: none;
       position: absolute; top: 100%; left: 0;
-      background: #2c2c2c;
-      border: 1px solid #444;
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 4px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       padding: 8px 0;
       min-width: 260px;
     }
@@ -34,73 +34,102 @@
     nav ul li ul li {
       padding: 8px 16px;
       white-space: nowrap;
-      color: #eee;
+      color: #333;
       font-size: 14px;
       transition: background 0.2s;
-      cursor: pointer;
     }
-    nav ul li ul li:hover { background: #3a3a3a; }
-    nav ul li ul li.separator { border-top: 1px solid #444; margin: 4px 0; padding: 0; cursor: default; }
-
-    /* Inputs & Buttons */n    nav ul li ul li label { display: flex; align-items: center; justify-content: space-between; font-size:14px; }
-    nav ul li ul li input[type="number"],
-    nav ul li ul li input[type="range"] { background: #444; color: #eee; border: 1px solid #555; border-radius: 4px; }
+    nav ul li ul li:hover { background: #f0f0f0; }
+    nav ul li ul li.separator { border-top: 1px solid #eee; margin: 4px 0; padding: 0; }
+    nav ul li ul li.complex { display: block; margin-bottom: 8px; }
+    nav ul li ul li.complex > div { display: flex; gap: 8px; align-items: center; }
+    nav ul li ul li label { font-size: 14px; display: flex; align-items: center; gap: 4px; }
+    nav ul li ul li input[type="number"] { width: 60px; }
+    nav ul li ul li input[type="range"] { width: 100%; margin: 4px 0; }
     nav ul li ul li input[type="color"] { width: 32px; height: 32px; border: none; }
-    nav ul li ul li button.check { padding:4px 8px; background:#4caf50; border:none; border-radius:4px; color:white; cursor:pointer; transition:background 0.2s; }
-    nav ul li ul li button.check:hover { background:#45a049; }
+    nav ul li ul li button.check {
+      padding: 4px 8px;
+      border: none;
+      background: #4caf50;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    nav ul li ul li button.check:hover { background: #45a049; }
 
-    /* Viewport (pan/zoom) */
-    #viewport { width:800px; height:600px; margin:20px auto; overflow:hidden; position:relative; touch-action:none; cursor:grab; background:#2c2c2c; }
-    #viewport.resizing-width { cursor: ew-resize; }
-    #viewport.resizing-height { cursor: ns-resize; }
-    #viewport.resizing-both { cursor: nwse-resize; }
-
+    /* Viewport (for pan/zoom) */
+    #viewport {
+      width: 800px; height: 600px;
+      margin: 20px auto;
+      overflow: hidden;
+      position: relative;
+      touch-action: none;
+      cursor: grab;
+      background: #fff;
+      transform-origin: center center;
+    }
     /* Collage Wrapper */
-    #collage-wrapper { position:absolute; inset:0; border:1px solid #444; background:#2c2c2c; }
-    #placeholder-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#888; font-size:16px; pointer-events:none; }
-    .grid-container { position:absolute; inset:0; }
-    .grid { position:absolute; top:0; left:0; width:100%; transform-origin:0 0; }
-    .grid-item { width:200px; background:#383838; overflow:hidden; position:absolute; border-radius:0; cursor:move; transition:transform 0.2s; }
-    .grid-item:hover { transform:scale(1.05); }
-    .grid-item img { display:block; width:100%; height:auto; transition:filter 0.2s; }
-    .grid-item:hover img { filter:brightness(1.1); }
+    #collage-wrapper {
+      position: absolute; inset: 0;
+      border: 1px solid #ccc;
+    }
+    #placeholder-text {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #888; font-size: 16px;
+      pointer-events: none;
+    }
+    .grid-container { position: absolute; inset: 0; }
+    .grid {
+      position: absolute; top: 0; left: 0;
+      width: 100%; transform-origin: 0 0;
+    }
+    .grid-item {
+      width: 200px; margin: 0;
+      background: #fafafa;
+      overflow: hidden;
+      position: absolute;
+      border-radius: 0;
+      cursor: move;
+      transition: transform 0.2s;
+    }
+    .grid-item:hover { transform: scale(1.05); }
+    .grid-item img { display: block; width: 100%; height: auto; transition: filter 0.2s; }
+    .grid-item:hover img { filter: brightness(1.1); }
 
     /* Hidden File Input */
-    #file-input { display:none; }
+    #file-input { display: none; }
 
-    /* Modal */
-    #modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index:2000; }
-    #modal { background:#383838; border-radius:8px; width:360px; padding:16px; box-shadow:0 4px 12px rgba(0,0,0,0.5); color:#eee; }
-    #modal h2 { margin-bottom:16px; font-size:18px; border-bottom:1px solid #555; padding-bottom:8px; }
-    #modal label { display:block; margin:8px 0 4px; font-weight:bold; font-size:14px; }
-    #modal input[type="range"] { width:100%; margin-bottom:12px; }
-    #modal button { padding:8px 12px; border:none; color:#fff; border-radius:4px; cursor:pointer; }
-    #modal button#modal-delete { background:#e53e3e; }
-    #modal button#modal-delete:hover { background:#c9302c; }
+    /* Modal Styles */
+    #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+    #modal { background: #fff; border-radius: 8px; width: 360px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    #modal h2 { margin-bottom: 16px; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 8px; color: #333; }
+    #modal label { display: block; margin: 8px 0 4px; font-weight: bold; font-size: 14px; }
+    #modal input[type="range"] { width: 100%; margin-bottom: 12px; }
+    #modal button { padding: 8px 12px; border: none; color: #fff; border-radius: 4px; cursor: pointer; }
+    #modal button#modal-delete { background: #e53e3e; }
+    #modal button#modal-delete:hover { background: #c9302c; }
   </style>
 </head>
 <body>
+  <!-- Menu Bar -->
   <nav>
     <ul>
       <li id="file-menu">File
         <ul>
-          <li onclick="closeMenus(); triggerUpload();">Upload Images…</li>
-          <li onclick="closeMenus(); download('png');">Download PNG</li>
-          <li onclick="closeMenus(); download('jpeg');">Download JPEG</li>
-          <li onclick="closeMenus(); download('pdf');">Download PDF</li>
-          <li class="separator"></li>
-          <li onclick="closeMenus(); clearImages();">Clear Images</li>
+          <li onclick="triggerUpload()">Upload Images…</li>
+          <li onclick="download('png')">Download PNG</li>
+          <li onclick="download('jpeg')">Download JPEG</li>
+          <li onclick="download('pdf')">Download PDF</li>
         </ul>
       </li>
       <li id="view-menu">View
         <ul>
-          <li onclick="pan(0,-100)">Pan Up</li>
-          <li onclick="pan(0,100)">Pan Down</li>
           <li onclick="pan(-100,0)">Pan Left</li>
           <li onclick="pan(100,0)">Pan Right</li>
           <li onclick="zoom(1.2)">Zoom In</li>
           <li onclick="zoom(0.8)">Zoom Out</li>
-          <li onclick="zoomFit()">Zoom Fit</li>
+          <li onclick="resetZoom()">Reset Zoom</li>
         </ul>
       </li>
       <li id="collage-menu">Collage
@@ -123,29 +152,32 @@
           </label></li>
           <li class="separator"></li>
           <li><label>Background Color:
-              <input type="color" id="collage-bg-color" value="#2c2c2c">
+              <input type="color" id="collage-bg-color" value="#ffffff">
           </label></li>
           <li class="separator"></li>
-          <li><label>Fade Corners:</label>
+          <li><label>Fade Corners:
               <input type="range" id="global-fade" min="0" max="100" value="0">
-          </li>
-          <li><label>Global Round Corners:</label>
+          </label></li>
+          <li><label>Global Round Corners:
               <input type="range" id="global-round" min="0" max="100" value="0">
-          </li>
+          </label></li>
         </ul>
       </li>
     </ul>
   </nav>
 
+  <!-- Hidden File Input -->
   <input type="file" id="file-input" multiple accept="image/*">
 
+  <!-- Viewport -->
   <div id="viewport">
     <div id="collage-wrapper">
-      <span id="placeholder-text">Click here or use File &gt; Upload Images to get started</span>
+      <span id="placeholder-text">Click here or use File > Upload Images to get started</span>
       <div class="grid-container"><div class="grid"></div></div>
     </div>
   </div>
 
+  <!-- Modal -->
   <div id="modal-overlay"><div id="modal">
     <h2>Edit Image</h2>
     <label>Size (%) <span id="modal-size-val">100</span></label>
@@ -155,16 +187,14 @@
     <div style="text-align:right; margin-top:12px;"><button id="modal-delete">Delete</button></div>
   </div></div>
 
+  <!-- Dependencies -->
   <script src="https://unpkg.com/packery@3/dist/packery.pkgd.min.js"></script>
   <script src="https://unpkg.com/draggabilly@2/dist/draggabilly.pkgd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => closeModal());
-    function closeModal() { modalOverlay.style.display = 'none'; }
-    function closeMenus() { document.querySelectorAll('nav ul li').forEach(i => i.classList.remove('open')); }
-
+    // Refs
     const viewport = document.getElementById('viewport');
     const wrapper = document.getElementById('collage-wrapper');
     const gridElem = wrapper.querySelector('.grid');
@@ -183,7 +213,8 @@
     const deleteBtn = document.getElementById('modal-delete');
     const modalOverlay = document.getElementById('modal-overlay');
 
-    let pckry = new Packery(gridElem, { itemSelector: '.grid-item', gutter: parseInt(gutterInput.value,10) });
+    // Init Packery
+    let pckry = new Packery(gridElem, {itemSelector: '.grid-item', gutter: parseInt(gutterInput.value,10)});
     pckry.on('layoutComplete', centerPackery);
 
     function centerPackery() {
@@ -195,107 +226,84 @@
       gridElem.style.top  = Math.max((wh - ph)/2,0) + 'px';
     }
 
+    // Menu toggle
     document.querySelectorAll('nav>ul>li').forEach(li => {
-      li.addEventListener('click', e => { e.stopPropagation(); closeMenus(); li.classList.toggle('open'); });
+      li.addEventListener('click', e => { e.stopPropagation(); document.querySelectorAll('nav ul li').forEach(i=>i.classList.remove('open')); li.classList.toggle('open'); });
     });
-    document.body.addEventListener('click', () => { closeMenus(); applyWidth(); applyHeight(); updateGutter(); centerPackery(); });
+    document.body.addEventListener('click', ()=>{ document.querySelectorAll('nav ul li').forEach(i=>i.classList.remove('open')); applyWidth(); applyHeight(); updateGutter(); centerPackery(); });
 
-    function triggerUpload() { fileInput.click(); }
-    fileInput.addEventListener('change', e => { closeMenus(); if(e.target.files.length) placeholder.style.display='none'; Array.from(e.target.files).forEach(file => { const reader=new FileReader(); reader.onload=ev=>{ const item=document.createElement('div'); item.className='grid-item'; item.dataset.origWidth=200; const img=document.createElement('img'); img.src=ev.target.result; item.appendChild(img); gridElem.appendChild(item); pckry.appended(item); makeDraggable(item); item.addEventListener('click', e=>{ e.stopPropagation(); openModal(item,img); }); pckry.layout(); }; reader.readAsDataURL(file); }); e.target.value=''; });
-    window.triggerUpload=triggerUpload;
+    // Upload trigger
+    function triggerUpload(){ fileInput.click(); } window.triggerUpload=triggerUpload;
+    wrapper.addEventListener('click', ()=>{ if(!gridElem.hasChildNodes()) triggerUpload(); });
 
-    function clearImages() { closeMenus(); pckry.getItemElements().forEach(el => { pckry.remove(el); el.remove(); }); pckry.layout(); placeholder.style.display='flex'; }
+    fileInput.addEventListener('change', e=>{
+      if(e.target.files.length) placeholder.style.display='none';
+      Array.from(e.target.files).forEach(file=>{
+        const reader=new FileReader(); reader.onload=ev=>{
+          const item=document.createElement('div'); item.className='grid-item'; item.dataset.origWidth=200;
+          const img=document.createElement('img'); img.src=ev.target.result;
+          item.appendChild(img); gridElem.appendChild(item);
+          pckry.appended(item); makeDraggable(item); item.addEventListener('click',()=>openModal(item,img)); pckry.layout();
+        }; reader.readAsDataURL(file);
+      }); e.target.value='';
+    });
+    function makeDraggable(el){ const dr=new Draggabilly(el); pckry.bindDraggabillyEvents(dr); }
 
-    function makeDraggable(el) { const dr=new Draggabilly(el); pckry.bindDraggabillyEvents(dr); }
-
+    // Pan & Zoom
     let isP=false,startX=0,startY=0,offX=0,offY=0,scale=1;
-    function applyTransform() { viewport.style.transform = `translate(${offX}px,${offY}px) scale(${scale})`; }
-    viewport.addEventListener('wheel', e => { e.preventDefault(); scale += -e.deltaY*0.001; applyTransform(); });
-    viewport.addEventListener('mousedown', e => { if(e.offsetX > viewport.clientWidth-8 && e.offsetY > viewport.clientHeight-8) { // corner
-        viewport.classList.add('resizing-both'); isP='both'; startX=e.clientX; startY=e.clientY;
-      } else if(e.offsetX > viewport.clientWidth-8) { viewport.classList.add('resizing-width'); isP='width'; startX=e.clientX;
-      } else if(e.offsetY > viewport.clientHeight-8) { viewport.classList.add('resizing-height'); isP='height'; startY=e.clientY;
-      } else { isP='pan'; startX=e.clientX; startY=e.clientY; viewport.style.cursor='grabbing'; }
-    });
-    document.addEventListener('mousemove', e => {
-      if(!isP) return;
-      if(isP==='pan') { offX+=e.clientX-startX; offY+=e.clientY-startY; startX=e.clientX; startY=e.clientY; applyTransform(); }
-      if(isP==='width' || isP==='both') {
-        const newW = Math.max(100, viewport.clientWidth + (e.clientX - startX));
-        viewport.style.width = newW + 'px'; menuWidth.value = newW;
-        startX = e.clientX; }
-      if(isP==='height' || isP==='both') {
-        const newH = Math.max(100, viewport.clientHeight + (e.clientY - startY));
-        viewport.style.height = newH + 'px'; menuHeight.value = newH;
-        startY = e.clientY; }
-      pckry.layout(); centerPackery();
-    });
-    document.addEventListener('mouseup', () => { if(isP) { viewport.classList.remove('resizing-width','resizing-height','resizing-both'); viewport.style.cursor='grab'; isP=false; } });
+    function applyTransform(){ viewport.style.transform = `translate(${offX}px,${offY}px) scale(${scale})`; }
+    viewport.addEventListener('wheel', e=>{ e.preventDefault(); scale += -e.deltaY*0.001; applyTransform(); });
+    viewport.addEventListener('mousedown', e=>{ isP=true; startX=e.clientX; startY=e.clientY; viewport.style.cursor='grabbing'; });
+    document.addEventListener('mousemove', e=>{ if(!isP) return; offX+=e.clientX-startX; offY+=e.clientY-startY; startX=e.clientX; startY=e.clientY; applyTransform(); });
+    document.addEventListener('mouseup', ()=>{ isP=false; viewport.style.cursor='grab'; });
 
-    function pan(dx,dy) { offX+=dx; offY+=dy; applyTransform(); }
-    function zoom(f) { scale*=f; applyTransform(); }
-    function zoomFit() {
-      closeMenus(); offX=0; offY=0;
-      const pw=pckry.packer.width, ph=pckry.packer.height;
-      const vw=viewport.clientWidth, vh=viewport.clientHeight;
-      scale = Math.min(vw/pw, vh/ph) || 1;
-      applyTransform(); centerPackery(); }
-    window.pan=pan; window.zoom=zoom; window.zoomFit=zoomFit;
+    function pan(dx,dy){ offX+=dx; offY+=dy; applyTransform(); }
+    function zoom(f){ scale*=f; applyTransform(); }
+    function resetZoom(){ offX=0; offY=0; scale=1; applyTransform(); centerPackery(); }
+    window.pan=pan; window.zoom=zoom; window.resetZoom=resetZoom;
 
-    document.addEventListener('keydown', e => { if(e.key==='Escape') zoomFit(); });
+    // Esc resets zoom
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') resetZoom(); });
 
-    function applyWidth() { const w=+menuWidth.value||800; viewport.style.width = w+'px'; pckry.layout(); centerPackery(); }
-    function applyHeight(){ const h=+menuHeight.value||600; viewport.style.height= h+'px'; pckry.layout(); centerPackery(); }
+    // Resize
+    function applyWidth(){ const w=+menuWidth.value||800; viewport.style.width=w+'px'; pckry.layout(); centerPackery(); }
+    function applyHeight(){ const h=+menuHeight.value||600; viewport.style.height=h+'px'; pckry.layout(); centerPackery(); }
     window.applyWidth=applyWidth; window.applyHeight=applyHeight;
 
-    function updateGutter(){ pckry.options.gutter = +gutterInput.value; pckry.layout(); centerPackery(); }
+    // Gutter
+    function updateGutter(){ pckry.options.gutter=+gutterInput.value; pckry.layout(); centerPackery(); }
     window.updateGutter=updateGutter;
 
-    bgColorInput.addEventListener('input', () => wrapper.style.background = bgColorInput.value);
+    // Background Color
+    bgColorInput.addEventListener('input', ()=>wrapper.style.background=bgColorInput.value);
 
-    async function download(fmt) {
-      closeMenus();
-      const clone = viewport.cloneNode(true);
-      const styleTag = document.createElement('style');
-      styleTag.textContent = '*{mask-image:none!important;-webkit-mask-image:none!important;transition:none!important;}';
+    // Download
+    async function download(fmt){
+      const clone=viewport.cloneNode(true);
+      const styleTag=document.createElement('style');
+      styleTag.textContent='*{mask-image:none!important;-webkit-mask-image:none!important;transition:none!important;}';
       clone.appendChild(styleTag);
       clone.style.position='absolute'; clone.style.left='-10000px'; clone.style.top='0';
       document.body.appendChild(clone);
-      try {
-        const canvas = await html2canvas(clone, { backgroundColor: window.getComputedStyle(viewport).backgroundColor });
-        if(fmt==='png'||fmt==='jpeg'){const mime=fmt==='png'?'image/png':'image/jpeg'; const a=document.createElement('a'); a.href=canvas.toDataURL(mime); a.download=`collage.${fmt}`; a.click();}
-        else {const{jsPDF}=window.jspdf; const img=canvas.toDataURL('image/png'); const pdf=new jsPDF({orientation:canvas.width>canvas.height?'l':'p',unit:'px',format:[canvas.width,canvas.height]}); pdf.addImage(img,'PNG',0,0,canvas.width,canvas.height); pdf.save('collage.pdf');}
-      } catch(err) { console.error(err); alert('Failed to capture collage: '+err.message); }
-      finally { document.body.removeChild(clone); }
-    }
+      try{
+        const canvas=await html2canvas(clone,{backgroundColor:window.getComputedStyle(viewport).backgroundColor});
+        if(fmt==='png'||fmt==='jpeg'){const mime=fmt==='png'?'image/png':'image/jpeg';const a=document.createElement('a');a.href=canvas.toDataURL(mime);a.download=`collage.${fmt}`;a.click();}
+        else {const{jsPDF}=window.jspdf;const img=canvas.toDataURL('image/png');const pdf=new jsPDF({orientation:canvas.width>canvas.height?'l':'p',unit:'px',format:[canvas.width,canvas.height]});pdf.addImage(img,'PNG',0,0,canvas.width,canvas.height);pdf.save('collage.pdf');}
+      }catch(err){console.error(err);alert('Failed to capture collage: '+err.message);}finally{document.body.removeChild(clone);}    }
     window.download=download;
 
-    globalFade.addEventListener('input', () => {
-      const p = +globalFade.value;
-      document.querySelectorAll('.grid-item img').forEach(img => {
-        img.style.maskImage = `radial-gradient(circle farthest-corner at center, black ${100-p}%, transparent 100%)`;
-      });
-    });
-    globalRound.addEventListener('input', () => {
-      const r = +globalRound.value;
-      document.querySelectorAll('.grid-item').forEach(item => item.style.borderRadius = r+'px');
-    });
+    // Global Effects
+    globalFade.addEventListener('input',()=>{const p=+globalFade.value,stop=100-p,bg=window.getComputedStyle(wrapper).backgroundColor;document.querySelectorAll('.grid-item img').forEach(img=>img.style.maskImage=`radial-gradient(circle farthest-corner at center, black ${stop}%, transparent 100%)`);});
+    globalRound.addEventListener('input',()=>{const r=+globalRound.value;document.querySelectorAll('.grid-item').forEach(item=>item.style.borderRadius=r+'px');});
 
-    function openModal(item,img) {
-      activeItem = item;
-      activeImg = img;
-      const orig = +item.dataset.origWidth;
-      const curr = item.getBoundingClientRect().width;
-      const pct = Math.round(curr/orig*100);
-      sizeSlider.value = pct;
-      sizeVal.textContent = pct;
-      let m = window.getComputedStyle(img).maskImage.match(/([0-9]+)%/);
-      let fade = m ? parseFloat(m[1]) : 0;
-      fadeSlider.value = fade;
-      fadeVal.textContent = fade;
-      closeModal();
-      modalOverlay.style.display = 'flex';
-    }
+    // Modal
+    let activeItem,activeImg;
+    function openModal(item,img){activeItem=item;activeImg=img;const orig=+item.dataset.origWidth,curr=item.getBoundingClientRect().width,pct=Math.round(curr/orig*100);sizeSlider.value=pct;sizeVal.textContent=pct;let mstyle=window.getComputedStyle(img).maskImage,fade=0;const m=mstyle.match(/black ([0-9.]+)%/);if(m) fade=parseFloat(m[1]);fadeSlider.value=fade;fadeVal.textContent=fade;modalOverlay.style.display='flex';}
+    function closeModal(){modalOverlay.style.display='none';}
+    modalOverlay.addEventListener('click',e=>{if(e.target===modalOverlay)closeModal();});
+    sizeSlider.addEventListener('input',()=>{const p=+sizeSlider.value;sizeVal.textContent=p;activeItem.style.width=(+activeItem.dataset.origWidth*p/100)+'px';pckry.layout();centerPackery();});
+    fadeSlider.addEventListener('input',()=>{const p=+fadeSlider.value;fadeVal.textContent=p;activeImg.style.maskImage=`radial-gradient(circle farthest-corner at center, black ${100-p}%, transparent 100%)`;});
+    deleteBtn.addEventListener('click',()=>{pckry.remove(activeItem);activeItem.remove();pckry.layout();closeModal();});
   </script>
 </body>
 </html>
